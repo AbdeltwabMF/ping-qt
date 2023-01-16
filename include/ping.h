@@ -13,15 +13,18 @@ public:
     QString args;
 
     explicit Ping(QObject *parent = nullptr);
-    void startPing(const QString &address);
+    void startPing();
+    void clearScreen();
     bool isRunning();
 
 private:
     QProcess *process;
+    bool listening;
     QString getProcessName() const;
 
 signals:
     void output(const QString &data);
+    void clear();
 
 private slots:
     void readyRead();

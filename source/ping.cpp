@@ -26,36 +26,43 @@ QString Ping::getProcessName() const
     return "bash";
 }
 
-void Ping::startPing(const QString &address)
+void Ping::startPing()
 {
     QByteArray command;
-    command.append("ping " + address.toStdString());
+    command.append("ping " + address.toStdString() + " " + args.toStdString() + "\r\n");
+    process->write(command);
+}
 
-    if (QSysInfo::productType() == "windows")
-        command.append("\r");
-    command.append("\n");
-
+void Ping::clearScreen()
+{
+    qInfo() << Q_FUNC_INFO;
     process->write("echo off\r\n");
     process->write("cls\r\n");
-
-    process->write(command);
+    emit clear();
 }
 
 void Ping::start()
 {
     qInfo() << Q_FUNC_INFO;
+    listening = true;
+    if(isRunning() == true) return;
     process->start(getProcessName());
+    // TODO: https://stackoverflow.com/questions/36598989/qprocess-launches-plink-exe-with-batch-script-but-killing-qprocess-doesnt-stop
+
+    qInfo() << process->processId();
 }
 
 void Ping::stop()
 {
     qInfo() << Q_FUNC_INFO;
+    listening = false;
     process->close();
 }
 
 void Ping::started()
 {
     qInfo() << Q_FUNC_INFO;
+    clearScreen();
 }
 
 void Ping::stateChanged(QProcess::ProcessState newState)
@@ -71,19 +78,21 @@ void Ping::stateChanged(QProcess::ProcessState newState)
         break;
     case QProcess::Running:
         emit output("Running");
-        startPing(address + " " + args);
+        startPing();
         break;
     }
 }
 
 void Ping::errorOccurred(QProcess::ProcessError error)
 {
+    if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     emit output("Error occurred");
 }
 
 void Ping::readyReadStandardError()
 {
+    if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     QByteArray stdErr = process->readAllStandardError();
     emit output(stdErr.trimmed());
@@ -91,6 +100,7 @@ void Ping::readyReadStandardError()
 
 void Ping::readyRead()
 {
+    if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     QByteArray result = process->readAll();
     emit output(result.trimmed());
@@ -98,6 +108,7 @@ void Ping::readyRead()
 
 void Ping::readyReadStandardOutput()
 {
+    if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     QByteArray stdOut = process->readAllStandardOutput();
     emit output(stdOut.trimmed());
@@ -105,6 +116,7 @@ void Ping::readyReadStandardOutput()
 
 void Ping::finished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     Q_UNUSED(exitCode);
     Q_UNUSED(exitStatus);

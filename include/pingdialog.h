@@ -10,6 +10,7 @@ class QLabel;
 class QLineEdit;
 class QPushButton;
 class QPlainTextEdit;
+class QTextEdit;
 QT_END_NAMESPACE
 
 class PingDialog : public QDialog
@@ -28,12 +29,13 @@ private:
     QPushButton *startButton;
     QPushButton *stopButton;
 
-    QPlainTextEdit *pingResult;
+    QTextEdit *pingResult;
 
     Ping *pingProcess;
 
 private slots:
     void output(const QString &data);
+    void clear();
     void startClicked();
 };
 

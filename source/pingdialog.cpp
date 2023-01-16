@@ -25,11 +25,11 @@ PingDialog::PingDialog(QWidget *parent)
 
     connect(stopButton, &QPushButton::clicked, pingProcess, &Ping::stop);
 
-    pingResult = new QPlainTextEdit;
-    pingResult->appendPlainText("");
+    pingResult = new QTextEdit;
     pingResult->setReadOnly(true);
 
     connect(pingProcess, &Ping::output, this, &PingDialog::output);
+    connect(pingProcess, &Ping::clear, this, &PingDialog::clear);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(osName);
@@ -64,7 +64,7 @@ PingDialog::~PingDialog()
 
 void PingDialog::output(const QString &data)
 {
-    pingResult->appendPlainText(data);
+    pingResult->append(data);
 }
 
 void PingDialog::startClicked()
@@ -75,4 +75,9 @@ void PingDialog::startClicked()
     pingProcess->address = addressLine->text();
     pingProcess->args = "-t";
     pingProcess->start();
+}
+
+void PingDialog::clear()
+{
+    pingResult->clear();
 }
