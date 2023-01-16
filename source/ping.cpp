@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#include "ping.h"
+#include "../include/ping.h"
 
 Ping::Ping(QObject *parent)
     : QObject{parent}
@@ -20,7 +20,8 @@ Ping::Ping(QObject *parent)
 
 QString Ping::getProcessName() const
 {
-    if(QSysInfo::productType() == "windows") return "cmd";
+    if (QSysInfo::productType() == "windows")
+        return "cmd";
 
     return "bash";
 }
@@ -30,7 +31,8 @@ void Ping::startPing(const QString &address)
     QByteArray command;
     command.append("ping " + address.toStdString());
 
-    if(QSysInfo::productType() == "windows") command.append("\r");
+    if (QSysInfo::productType() == "windows")
+        command.append("\r");
     command.append("\n");
 
     process->write("echo off\r\n");
@@ -59,17 +61,17 @@ void Ping::started()
 void Ping::stateChanged(QProcess::ProcessState newState)
 {
     qInfo() << Q_FUNC_INFO;
-    switch(newState)
+    switch (newState)
     {
-        case QProcess::NotRunning:
-            emit output("Not running");
+    case QProcess::NotRunning:
+        emit output("Not running");
         break;
-        case QProcess::Starting:
-            emit output("Starting");
+    case QProcess::Starting:
+        emit output("Starting");
         break;
-        case QProcess::Running:
-            emit output("Running");
-            startPing(address + " " + args);
+    case QProcess::Running:
+        emit output("Running");
+        startPing(address + " " + args);
         break;
     }
 }

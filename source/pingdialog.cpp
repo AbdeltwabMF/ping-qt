@@ -1,6 +1,6 @@
 #include <QtWidgets>
 
-#include "pingdialog.h"
+#include "../include/pingdialog.h"
 
 PingDialog::PingDialog(QWidget *parent)
     : QDialog(parent)
@@ -52,7 +52,6 @@ PingDialog::PingDialog(QWidget *parent)
 
     mainLayout->setRowStretch(3, 2);
 
-
     setLayout(mainLayout);
 
     setWindowTitle(tr("Ping Qt"));
@@ -70,7 +69,8 @@ void PingDialog::output(const QString &data)
 
 void PingDialog::startClicked()
 {
-    if(pingProcess->isRunning() == true) return;
+    if (pingProcess->isRunning() == true)
+        return;
 
     pingProcess->address = addressLine->text();
     pingProcess->args = "-t";

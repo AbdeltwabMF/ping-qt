@@ -1,6 +1,6 @@
 #include <QApplication>
 
-#include "pingdialog.h"
+#include "../include/pingdialog.h"
 
 int main(int argc, char *argv[])
 {
