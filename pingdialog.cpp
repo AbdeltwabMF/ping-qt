@@ -5,8 +5,10 @@
 PingDialog::PingDialog(QWidget *parent)
     : QDialog(parent)
 {
+    pingProcess = new Ping;
+
     osName = new QLineEdit;
-    osName->setText("OS: ");
+    osName->setText("OS: " + QSysInfo::prettyProductName());
     osName->setReadOnly(true);
 
     addressLineLabel = new QLabel(tr("&Address:"));
@@ -16,20 +18,18 @@ PingDialog::PingDialog(QWidget *parent)
     startButton = new QPushButton(tr("&Start"));
     startButton->setDefault(true);
 
-    connect(startButton, SIGNAL(clicked()), this, SLOT(startClicked()));
+    connect(startButton, &QPushButton::clicked, this, &PingDialog::startClicked);
 
     stopButton = new QPushButton(tr("&Stop"));
     stopButton->setDefault(true);
 
-    connect(stopButton, SIGNAL(clicked()), this, SLOT(stopClicked()));
+    connect(stopButton, &QPushButton::clicked, pingProcess, &Ping::stop);
 
-    output = new QLineEdit;
-    output->setText("");
-    output->setReadOnly(true);
+    pingResult = new QPlainTextEdit;
+    pingResult->appendPlainText("");
+    pingResult->setReadOnly(true);
 
-    QFont font = output->font();
-    font.setPointSize(font.pointSize() + 8);
-    output->setFont(font);
+    connect(pingProcess, &Ping::output, this, &PingDialog::output);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(osName);
@@ -41,7 +41,7 @@ PingDialog::PingDialog(QWidget *parent)
     middleLayout->addWidget(stopButton);
 
     QVBoxLayout *bottomLayout = new QVBoxLayout;
-    bottomLayout->addWidget(output);
+    bottomLayout->addWidget(pingResult);
 
     QGridLayout *mainLayout = new QGridLayout();
 
@@ -55,24 +55,24 @@ PingDialog::PingDialog(QWidget *parent)
 
     setLayout(mainLayout);
 
-    setWindowTitle(tr("Ping"));
+    setWindowTitle(tr("Ping Qt"));
+    setSizeGripEnabled(true);
 }
 
 PingDialog::~PingDialog()
 {
-    delete addressLineLabel;
-    delete addressLine;
-    delete startButton;
-    delete stopButton;
-    delete output;
+}
+
+void PingDialog::output(const QString &data)
+{
+    pingResult->appendPlainText(data);
 }
 
 void PingDialog::startClicked()
 {
-    output->setText(addressLine->text());
-}
+    if(pingProcess->isRunning() == true) return;
 
-void PingDialog::stopClicked()
-{
-    output->clear();
+    pingProcess->address = addressLine->text();
+    pingProcess->args = "-t";
+    pingProcess->start();
 }

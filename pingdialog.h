@@ -3,16 +3,18 @@
 
 #include <QDialog>
 
+#include "ping.h"
+
 QT_BEGIN_NAMESPACE
 class QLabel;
 class QLineEdit;
 class QPushButton;
+class QPlainTextEdit;
 QT_END_NAMESPACE
 
 class PingDialog : public QDialog
 {
     Q_OBJECT
-
 public:
     PingDialog(QWidget *parent = nullptr);
     ~PingDialog();
@@ -26,10 +28,13 @@ private:
     QPushButton *startButton;
     QPushButton *stopButton;
 
-    QLineEdit *output;
+    QPlainTextEdit *pingResult;
+
+    Ping *pingProcess;
 
 private slots:
+    void output(const QString &data);
     void startClicked();
-    void stopClicked();
 };
+
 #endif // MAINWINDOW_H
