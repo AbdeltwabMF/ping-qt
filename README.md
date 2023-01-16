@@ -2,6 +2,10 @@
 
 User interface for ping utility.
 
+## Screenshot
+
+![ping-qt](assets/ping-qt.png)
+
 ## Development
 
 ### Dependencies
