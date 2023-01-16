@@ -20,7 +20,7 @@ set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(PROJECT_SOURCES
     ${SOURCES_DIR}/main.cpp ${SOURCES_DIR}/pingdialog.cpp
-    ${SOURCES_DIR}/ping.cpp ${HEADERS_DIR}/pingdialog.h ${HEADERS_DIR}/ping.h)
+    ${SOURCES_DIR}/ping.cpp ${HEADERS_DIR}/pingdialog.h ${HEADERS_DIR}/ping.h resources.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
   qt_add_executable(ping-qt MANUAL_FINALIZATION ${PROJECT_SOURCES})

@@ -21,7 +21,7 @@ public:
     ~PingDialog();
 
 private:
-    QLineEdit *osName;
+    QLabel *osName;
 
     QLabel *addressLineLabel;
     QLineEdit *addressLine;
