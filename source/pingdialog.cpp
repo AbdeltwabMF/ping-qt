@@ -12,7 +12,17 @@ PingDialog::PingDialog(QWidget *parent)
     connect(this, &QDialog::rejected, pingProcess, &Ping::stop);
 
     osName = new QLabel;
-    osName->setText(QSysInfo::prettyProductName());
+    QString systemIcon;
+    if(QSysInfo::productType() == "windows")
+    {
+        systemIcon = "";
+    } else if(QSysInfo::productType() == "macos") {
+        systemIcon = "";
+    } else {
+        systemIcon = "";
+    }
+
+    osName->setText(systemIcon + "  " + QSysInfo::prettyProductName());
     osName->setStyleSheet("QLabel {"
                           "background-color: #e3e3e3;"
                           "color: #3f3f3f;"
@@ -35,37 +45,36 @@ PingDialog::PingDialog(QWidget *parent)
                                "background-color: #F9F9F9;"
                                "}");
 
-    startButton = new QPushButton(tr("&Start"));
+    startButton = new QPushButton(tr("&  Start"));
     startButton->setDefault(true);
     startButton->setStyleSheet("QPushButton {"
-                               "background-color: #2CA542;"
+                               "background-color: #018C1A;"
                                "color: #ffffff;"
                                "border-radius: 8%;"
-                               "border: 2px solid #018C1A;"
-                               "padding: 6 32;"
+                               "padding: 8 32;"
                                "}"
                                "QPushButton:hover:!pressed {"
-                               "background-color: #018C1A;"
+                               "background-color: #2CA542;"
                                "}");
 
+    connect(startButton, &QPushButton::clicked, this, &PingDialog::onStartClicked);
+    connect(pingProcess, &Ping::started, this, &PingDialog::onStarted);
 
-    connect(startButton, &QPushButton::clicked, this, &PingDialog::startClicked);
-
-    stopButton = new QPushButton(tr("&Stop"));
+    stopButton = new QPushButton(tr("&  Stop"));
     stopButton->setDefault(true);
     stopButton->setStyleSheet("QPushButton {"
-                              "background-color: #DA4D2E;"
+                              "background-color: #E98A76;"
                               "color: #ffffff;"
                               "border-radius: 8%;"
-                              "border: 2px solid #BC2100;"
-                              "padding: 6 32;"
+                              "padding: 8 32;"
                               "}"
                               "QPushButton:hover:!pressed {"
                               "background-color: #BC2100;"
                               "}");
-
+    stopButton->setEnabled(false);
 
     connect(stopButton, &QPushButton::clicked, pingProcess, &Ping::stop);
+    connect(pingProcess, &Ping::finished, this, &PingDialog::onFinished);
 
     pingResult = new QPlainTextEdit;
     pingResult->setPlainText("No output yet.");
@@ -132,14 +141,63 @@ void PingDialog::output(const QString &data)
     pingResult->appendPlainText(data);
 }
 
-void PingDialog::startClicked()
+void PingDialog::onStartClicked()
 {
-    if (pingProcess->isRunning() == true)
-        return;
-
     pingResult->clear();
 
     pingProcess->address = addressLine->text();
     pingProcess->args = "-t";
     pingProcess->start();
+}
+
+void PingDialog::onStarted()
+{
+    startButton->setEnabled(false);
+    stopButton->setEnabled(true);
+
+    startButton->setStyleSheet("QPushButton {"
+                               "background-color: #71D383;"
+                               "color: #ffffff;"
+                               "border-radius: 8%;"
+                               "padding: 8 32;"
+                               "}"
+                               "QPushButton:hover:!pressed {"
+                               "background-color: #018C1A;"
+                               "}");
+
+    stopButton->setStyleSheet("QPushButton {"
+                              "background-color: #BC2100;"
+                              "color: #ffffff;"
+                              "border-radius: 8%;"
+                              "padding: 8 32;"
+                              "}"
+                              "QPushButton:hover:!pressed {"
+                              "background-color: #DA4D2E;"
+                              "}");
+}
+
+void PingDialog::onFinished()
+{
+    startButton->setEnabled(true);
+    stopButton->setEnabled(false);
+
+    startButton->setStyleSheet("QPushButton {"
+                               "background-color: #018C1A;"
+                               "color: #ffffff;"
+                               "border-radius: 8%;"
+                               "padding: 8 32;"
+                               "}"
+                               "QPushButton:hover:!pressed {"
+                               "background-color: #2CA542;"
+                               "}");
+
+    stopButton->setStyleSheet("QPushButton {"
+                              "background-color: #E98A76;"
+                              "color: #ffffff;"
+                              "border-radius: 8%;"
+                              "padding: 8 32;"
+                              "}"
+                              "QPushButton:hover:!pressed {"
+                              "background-color: #BC2100;"
+                              "}");
 }

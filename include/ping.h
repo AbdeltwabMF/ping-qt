@@ -13,7 +13,6 @@ public:
 
     QString address;
     QString args;
-    bool isRunning();
 
 private:
     QProcess *process;
@@ -21,11 +20,13 @@ private:
 
 signals:
     void output(const QString &data);
+    void started();
+    void finished();
 
 private slots:
     void readyRead();
-    void started();
-    void finished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onStarted();
+    void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
     void errorOccurred(QProcess::ProcessError error);
     void stateChanged(QProcess::ProcessState newState);
     void readyReadStandardError();

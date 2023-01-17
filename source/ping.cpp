@@ -9,19 +9,17 @@ Ping::Ping(QObject *parent)
 {
     process = new QProcess;
 
-    connect(process, &QProcess::started, this, &Ping::started);
+    connect(process, &QProcess::started, this, &Ping::onStarted);
     connect(process, &QProcess::stateChanged, this, &Ping::stateChanged);
     connect(process, &QProcess::readyRead, this, &Ping::readyRead);
     connect(process, &QProcess::readyReadStandardOutput, this, &Ping::readyReadStandardOutput);
     connect(process, &QProcess::errorOccurred, this, &Ping::errorOccurred);
     connect(process, &QProcess::readyReadStandardError, this, &Ping::readyReadStandardError);
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Ping::finished);
+    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Ping::onFinished);
 }
 
 void Ping::start()
 {
-    if(isRunning() == true) return;
-
     qInfo() << Q_FUNC_INFO;
     listening = true;
     QStringList processArgs = {address, args};
@@ -35,9 +33,10 @@ void Ping::stop()
     process->close();
 }
 
-void Ping::started()
+void Ping::onStarted()
 {
     qInfo() << Q_FUNC_INFO;
+    emit started();
 }
 
 void Ping::stateChanged(QProcess::ProcessState newState)
@@ -85,16 +84,11 @@ void Ping::readyReadStandardOutput()
     emit output(stdOut.trimmed());
 }
 
-void Ping::finished(int exitCode, QProcess::ExitStatus exitStatus)
+void Ping::onFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
-    if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     Q_UNUSED(exitCode);
     Q_UNUSED(exitStatus);
     emit output("Complete");
-}
-
-bool Ping::isRunning()
-{
-    return (process->state() == QProcess::Running);
+    emit finished();
 }

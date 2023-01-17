@@ -29,7 +29,9 @@ private:
 
 private slots:
     void output(const QString &data);
-    void startClicked();
+    void onStartClicked();
+    void onStarted();
+    void onFinished();
 };
 
 #endif // MAINWINDOW_H
