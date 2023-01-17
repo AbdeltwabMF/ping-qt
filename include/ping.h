@@ -9,22 +9,18 @@ class Ping : public QObject
 {
     Q_OBJECT
 public:
+    explicit Ping(QObject *parent = nullptr);
+
     QString address;
     QString args;
-
-    explicit Ping(QObject *parent = nullptr);
-    void startPing();
-    void clearScreen();
     bool isRunning();
 
 private:
     QProcess *process;
     bool listening;
-    QString getProcessName() const;
 
 signals:
     void output(const QString &data);
-    void clear();
 
 private slots:
     void readyRead();

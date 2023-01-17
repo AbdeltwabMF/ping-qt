@@ -9,7 +9,6 @@ QT_BEGIN_NAMESPACE
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class QPlainTextEdit;
 class QTextEdit;
 QT_END_NAMESPACE
 
@@ -35,7 +34,6 @@ private:
 
 private slots:
     void output(const QString &data);
-    void clear();
     void startClicked();
 };
 

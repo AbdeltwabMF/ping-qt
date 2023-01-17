@@ -18,38 +18,14 @@ Ping::Ping(QObject *parent)
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Ping::finished);
 }
 
-QString Ping::getProcessName() const
-{
-    if (QSysInfo::productType() == "windows")
-        return "cmd";
-
-    return "bash";
-}
-
-void Ping::startPing()
-{
-    QByteArray command;
-    command.append("ping " + address.toStdString() + " " + args.toStdString() + "\r\n");
-    process->write(command);
-}
-
-void Ping::clearScreen()
-{
-    qInfo() << Q_FUNC_INFO;
-    process->write("echo off\r\n");
-    process->write("cls\r\n");
-    emit clear();
-}
-
 void Ping::start()
 {
+    if(isRunning() == true) return;
+
     qInfo() << Q_FUNC_INFO;
     listening = true;
-    if(isRunning() == true) return;
-    process->start(getProcessName());
-    // TODO: https://stackoverflow.com/questions/36598989/qprocess-launches-plink-exe-with-batch-script-but-killing-qprocess-doesnt-stop
-
-    qInfo() << process->processId();
+    QStringList processArgs = {address, args};
+    process->start("ping", processArgs);
 }
 
 void Ping::stop()
@@ -62,7 +38,6 @@ void Ping::stop()
 void Ping::started()
 {
     qInfo() << Q_FUNC_INFO;
-    clearScreen();
 }
 
 void Ping::stateChanged(QProcess::ProcessState newState)
@@ -71,14 +46,10 @@ void Ping::stateChanged(QProcess::ProcessState newState)
     switch (newState)
     {
     case QProcess::NotRunning:
-        emit output("Not running");
         break;
     case QProcess::Starting:
-        emit output("Starting");
         break;
     case QProcess::Running:
-        emit output("Running");
-        startPing();
         break;
     }
 }

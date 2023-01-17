@@ -89,7 +89,6 @@ PingDialog::PingDialog(QWidget *parent)
                               "}");
 
     connect(pingProcess, &Ping::output, this, &PingDialog::output);
-    connect(pingProcess, &Ping::clear, pingResult, &QTextEdit::clear, Qt::QueuedConnection);
 
     QHBoxLayout *topLayout = new QHBoxLayout;
     topLayout->addWidget(osName);
@@ -136,12 +135,9 @@ void PingDialog::startClicked()
     if (pingProcess->isRunning() == true)
         return;
 
+    pingResult->clear();
+
     pingProcess->address = addressLine->text();
     pingProcess->args = "-t";
     pingProcess->start();
-}
-
-void PingDialog::clear()
-{
-    pingResult->clear();
 }
