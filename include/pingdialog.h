@@ -22,7 +22,6 @@ public:
 private:
     QLabel *osName;
 
-    QLabel *addressLineLabel;
     QLineEdit *addressLine;
 
     QPushButton *startButton;

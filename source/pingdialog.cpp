@@ -10,27 +10,24 @@ PingDialog::PingDialog(QWidget *parent)
     pingProcess = new Ping;
 
     osName = new QLabel;
-    osName->setText("OS: " + QSysInfo::prettyProductName());
+    osName->setText(QSysInfo::prettyProductName());
     osName->setStyleSheet("QLabel {"
                           "background-color: #e3e3e3;"
                           "color: #3f3f3f;"
                           "padding: 4 0;"
-                          "border: 1px solid #3f3f3f33;"
                           "border-radius: 8%;"
                           "};");
     osName->setAlignment(Qt::AlignCenter);
 
-    addressLineLabel = new QLabel(tr("&Address:"));
     addressLine = new QLineEdit;
-    addressLineLabel->setBuddy(addressLine);
     addressLine->setStyleSheet("QLineEdit {"
                                "background-color: #EBEBEB;"
-                               "border: 1px solid #939393;"
+                               "border: 2px solid #C3C3C3;"
                                "padding: 3 3;"
                                "border-radius: 4%;"
                                "}"
                                "QLineEdit:hover:!pressed {"
-                               "border: 1px solid #60CDCF;"
+                               "border: 2px solid #60CDCF;"
                                "}"
                                "QLineEdit:focus, QLineEdit:hover {"
                                "background-color: #F9F9F9;"
@@ -41,7 +38,8 @@ PingDialog::PingDialog(QWidget *parent)
     startButton->setStyleSheet("QPushButton {"
                                "background-color: #2CA542;"
                                "color: #ffffff;"
-                               "border-radius: 4%;"
+                               "border-radius: 8%;"
+                               "border: 2px solid #018C1A;"
                                "padding: 6 32;"
                                "}"
                                "QPushButton:hover:!pressed {"
@@ -56,7 +54,8 @@ PingDialog::PingDialog(QWidget *parent)
     stopButton->setStyleSheet("QPushButton {"
                               "background-color: #DA4D2E;"
                               "color: #ffffff;"
-                              "border-radius: 4%;"
+                              "border-radius: 8%;"
+                              "border: 2px solid #BC2100;"
                               "padding: 6 32;"
                               "}"
                               "QPushButton:hover:!pressed {"
@@ -67,16 +66,15 @@ PingDialog::PingDialog(QWidget *parent)
     connect(stopButton, &QPushButton::clicked, pingProcess, &Ping::stop);
 
     pingResult = new QPlainTextEdit;
+    pingResult->setPlainText("No output yet.");
     pingResult->setReadOnly(true);
 
     pingResult->setStyleSheet("QPlainTextEdit {"
                               "background-color: #f4f4f4;"
                               "color: #545454;"
                               "border-radius: 4%;"
-                              "border: 1px solid #DCA3FF;"
-                              "padding: 8;"
                               "}");
-    pingResult->setFixedHeight(350);
+    pingResult->setFixedHeight(300);
     pingResult->setFixedWidth(620);
 
     qInfo() << pingResult->maximumWidth();
@@ -87,24 +85,32 @@ PingDialog::PingDialog(QWidget *parent)
     QHBoxLayout *osLayout = new QHBoxLayout;
     osLayout->addWidget(osName);
 
+    QGroupBox *osGroup = new QGroupBox(tr("&Operating System"));
+    osGroup->setLayout(osLayout);
+
     QHBoxLayout *addressLayout = new QHBoxLayout;
-    addressLayout->addWidget(addressLineLabel);
     addressLayout->addWidget(addressLine);
+
+    QGroupBox *addressGroup = new QGroupBox(tr("&Address"));
+    addressGroup->setLayout(addressLayout);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(startButton);
     buttonLayout->addWidget(stopButton);
 
-    QVBoxLayout *resultLayout = new QVBoxLayout;
-    resultLayout->addWidget(pingResult);
+    QVBoxLayout *outputLayout = new QVBoxLayout;
+    outputLayout->addWidget(pingResult);
+
+    QGroupBox *outputGroup = new QGroupBox(tr("&Output"));
+    outputGroup->setLayout(outputLayout);
 
     QGridLayout *mainLayout = new QGridLayout();
 
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    mainLayout->addLayout(osLayout, 0, 1);
-    mainLayout->addLayout(addressLayout, 1, 1);
-    mainLayout->addLayout(buttonLayout, 2, 1);
-    mainLayout->addLayout(resultLayout, 3, 1);
+    mainLayout->addWidget(osGroup, 0, 1);
+    mainLayout->addWidget(addressGroup, 1, 1);
+    mainLayout->addWidget(outputGroup, 2, 1);
+    mainLayout->addLayout(buttonLayout, 3, 1);
 
     mainLayout->setRowStretch(4, 2);
 
