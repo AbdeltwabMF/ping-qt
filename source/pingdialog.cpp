@@ -9,6 +9,8 @@ PingDialog::PingDialog(QWidget *parent)
     qDebug() << this->size();
     pingProcess = new Ping;
 
+    connect(this, &QDialog::rejected, pingProcess, &Ping::stop);
+
     osName = new QLabel;
     osName->setText(QSysInfo::prettyProductName());
     osName->setStyleSheet("QLabel {"
@@ -74,11 +76,11 @@ PingDialog::PingDialog(QWidget *parent)
                               "color: #545454;"
                               "border-radius: 4%;"
                               "}");
-    pingResult->setFixedHeight(300);
+    pingResult->setFixedHeight(280);
     pingResult->setFixedWidth(620);
 
-    qInfo() << pingResult->maximumWidth();
-    qInfo() << pingResult->maximumHeight();
+    qInfo() << "QPlainTextEdit: " << pingResult->maximumWidth();
+    qInfo() << "QPlainTextEdit: " << pingResult->maximumHeight();
 
     connect(pingProcess, &Ping::output, this, &PingDialog::output);
 
@@ -116,10 +118,9 @@ PingDialog::PingDialog(QWidget *parent)
 
     setLayout(mainLayout);
 
-    setWindowTitle(tr("Ping Qt"));
     setSizeGripEnabled(true);
-
-    qDebug() << this->size();
+    setWindowIcon(QIcon(":/images/icon.png"));
+    setWindowTitle(tr("Ping Qt"));
 }
 
 PingDialog::~PingDialog()

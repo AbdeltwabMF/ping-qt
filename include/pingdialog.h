@@ -21,14 +21,10 @@ public:
 
 private:
     QLabel *osName;
-
     QLineEdit *addressLine;
-
     QPushButton *startButton;
     QPushButton *stopButton;
-
     QPlainTextEdit *pingResult;
-
     Ping *pingProcess;
 
 private slots:

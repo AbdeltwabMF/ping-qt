@@ -12,7 +12,6 @@ int main(int argc, char *argv[])
     app.setFont(QFont("FantasqueSansMono Nerd Font", 14));
 
     PingDialog dialog;
-    dialog.resize(890, 550);
     dialog.show();
 
     return app.exec();
