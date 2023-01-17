@@ -7,11 +7,6 @@ PingDialog::PingDialog(QWidget *parent)
     : QDialog(parent)
 {
     qDebug() << this->size();
-
-    QFontDatabase::addApplicationFont(":/fonts/Quicksand-Regular.ttf");
-    QFont font = QFont("Quicksand", 13, 500);
-    setFont(font);
-
     pingProcess = new Ping;
 
     osName = new QLabel;
@@ -22,9 +17,6 @@ PingDialog::PingDialog(QWidget *parent)
                           "padding: 4 0;"
                           "border: 1px solid #3f3f3f33;"
                           "border-radius: 8%;"
-                          "font-weight: 700;"
-                          "font-size: 16;"
-                          "font-family: Quicksand;"
                           "};");
     osName->setAlignment(Qt::AlignCenter);
 
@@ -32,31 +24,28 @@ PingDialog::PingDialog(QWidget *parent)
     addressLine = new QLineEdit;
     addressLineLabel->setBuddy(addressLine);
     addressLine->setStyleSheet("QLineEdit {"
+                               "background-color: #EBEBEB;"
                                "border: 1px solid #939393;"
-                               "font-weight: 600;"
-                               "font-family: Quicksand;"
-                               "font-size: 14;"
                                "padding: 3 3;"
                                "border-radius: 4%;"
                                "}"
                                "QLineEdit:hover:!pressed {"
                                "border: 1px solid #60CDCF;"
+                               "}"
+                               "QLineEdit:focus, QLineEdit:hover {"
+                               "background-color: #F9F9F9;"
                                "}");
 
     startButton = new QPushButton(tr("&Start"));
     startButton->setDefault(true);
     startButton->setStyleSheet("QPushButton {"
-                               "background-color: #9AFFC0;"
-                               "color: #023314;"
+                               "background-color: #2CA542;"
+                               "color: #ffffff;"
                                "border-radius: 4%;"
-                               "font-family: Quicksand;"
-                               "font-weight: 500;"
-                               "font-size: 14;"
-                               "padding: 3 16;"
-                               "border: 1px solid #019538;"
+                               "padding: 6 32;"
                                "}"
                                "QPushButton:hover:!pressed {"
-                               "background-color: #5FEF94;"
+                               "background-color: #018C1A;"
                                "}");
 
 
@@ -65,55 +54,61 @@ PingDialog::PingDialog(QWidget *parent)
     stopButton = new QPushButton(tr("&Stop"));
     stopButton->setDefault(true);
     stopButton->setStyleSheet("QPushButton {"
-                              "background-color: #F99F9F;"
-                              "color: #330202;"
+                              "background-color: #DA4D2E;"
+                              "color: #ffffff;"
                               "border-radius: 4%;"
-                              "font-family: Quicksand;"
-                              "font-size: 14;"
-                              "font-weight: 500;"
-                              "padding: 3 16;"
-                              "border: 1px solid #B70404;"
+                              "padding: 6 32;"
                               "}"
                               "QPushButton:hover:!pressed {"
-                              "background-color: #E08585;"
+                              "background-color: #BC2100;"
                               "}");
 
 
     connect(stopButton, &QPushButton::clicked, pingProcess, &Ping::stop);
 
-    pingResult = new QTextEdit;
+    pingResult = new QPlainTextEdit;
     pingResult->setReadOnly(true);
-    pingResult->setStyleSheet("QTextEdit {"
-                              "font-size: 9;"
-                              "font-family: Quicksand;"
+
+    pingResult->setStyleSheet("QPlainTextEdit {"
+                              "background-color: #f4f4f4;"
+                              "color: #545454;"
+                              "border-radius: 4%;"
+                              "border: 1px solid #DCA3FF;"
+                              "padding: 8;"
                               "}");
+    pingResult->setFixedHeight(350);
+    pingResult->setFixedWidth(620);
+
+    qInfo() << pingResult->maximumWidth();
+    qInfo() << pingResult->maximumHeight();
 
     connect(pingProcess, &Ping::output, this, &PingDialog::output);
 
-    QHBoxLayout *topLayout = new QHBoxLayout;
-    topLayout->addWidget(osName);
+    QHBoxLayout *osLayout = new QHBoxLayout;
+    osLayout->addWidget(osName);
 
-    QHBoxLayout *middleLayout = new QHBoxLayout;
-    middleLayout->addWidget(addressLineLabel);
-    middleLayout->addWidget(addressLine);
-    middleLayout->addWidget(startButton);
-    middleLayout->addWidget(stopButton);
+    QHBoxLayout *addressLayout = new QHBoxLayout;
+    addressLayout->addWidget(addressLineLabel);
+    addressLayout->addWidget(addressLine);
 
-    QVBoxLayout *bottomLayout = new QVBoxLayout;
-    bottomLayout->addWidget(pingResult);
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
+    buttonLayout->addWidget(startButton);
+    buttonLayout->addWidget(stopButton);
+
+    QVBoxLayout *resultLayout = new QVBoxLayout;
+    resultLayout->addWidget(pingResult);
 
     QGridLayout *mainLayout = new QGridLayout();
 
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
-    mainLayout->addLayout(topLayout, 0, 1);
-    mainLayout->addLayout(middleLayout, 1, 1);
-    mainLayout->addLayout(bottomLayout, 2, 1);
+    mainLayout->addLayout(osLayout, 0, 1);
+    mainLayout->addLayout(addressLayout, 1, 1);
+    mainLayout->addLayout(buttonLayout, 2, 1);
+    mainLayout->addLayout(resultLayout, 3, 1);
 
-    mainLayout->setRowStretch(3, 2);
+    mainLayout->setRowStretch(4, 2);
 
     setLayout(mainLayout);
-    setMinimumSize(890, 550);
-    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
 
     setWindowTitle(tr("Ping Qt"));
     setSizeGripEnabled(true);
@@ -127,7 +122,7 @@ PingDialog::~PingDialog()
 
 void PingDialog::output(const QString &data)
 {
-    pingResult->append(data);
+    pingResult->appendPlainText(data);
 }
 
 void PingDialog::startClicked()
