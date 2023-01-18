@@ -11,9 +11,6 @@ class Ping : public QObject
 public:
     explicit Ping(QObject *parent = nullptr);
 
-    QString address;
-    QString args;
-
 private:
     QProcess *process;
     bool listening;
@@ -24,16 +21,16 @@ signals:
     void finished();
 
 private slots:
-    void readyRead();
+    void read();
     void onStarted();
     void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void errorOccurred(QProcess::ProcessError error);
-    void stateChanged(QProcess::ProcessState newState);
-    void readyReadStandardError();
-    void readyReadStandardOutput();
+    void onErrorOccurred(QProcess::ProcessError error);
+    void onStateChanged(QProcess::ProcessState newState);
+    void readStandardError();
+    void readStandardOutput();
 
 public slots:
-    void start();
+    void start(const QString &address, const QString &args);
     void stop();
 };
 

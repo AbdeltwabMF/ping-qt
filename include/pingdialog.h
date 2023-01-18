@@ -22,16 +22,20 @@ public:
 private:
     QLabel *osName;
     QLineEdit *addressLine;
-    QPushButton *startButton;
-    QPushButton *stopButton;
-    QPlainTextEdit *pingResult;
     Ping *pingProcess;
+    QPlainTextEdit *pingResult;
+    QPushButton *button;
+    bool isRunning;
+
+signals:
+    void startClicked(const QString &address, const QString &args);
+    void stopClicked();
 
 private slots:
     void output(const QString &data);
-    void onStartClicked();
     void onStarted();
     void onFinished();
+    void onButtonClicked();
 };
 
 #endif // MAINWINDOW_H

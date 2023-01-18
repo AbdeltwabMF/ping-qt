@@ -10,15 +10,16 @@ Ping::Ping(QObject *parent)
     process = new QProcess;
 
     connect(process, &QProcess::started, this, &Ping::onStarted);
-    connect(process, &QProcess::stateChanged, this, &Ping::stateChanged);
-    connect(process, &QProcess::readyRead, this, &Ping::readyRead);
-    connect(process, &QProcess::readyReadStandardOutput, this, &Ping::readyReadStandardOutput);
-    connect(process, &QProcess::errorOccurred, this, &Ping::errorOccurred);
-    connect(process, &QProcess::readyReadStandardError, this, &Ping::readyReadStandardError);
+    connect(process, &QProcess::stateChanged, this, &Ping::onStateChanged);
+    connect(process, &QProcess::readyRead, this, &Ping::read);
+    connect(process, &QProcess::readyReadStandardOutput, this, &Ping::readStandardOutput);
+    connect(process, &QProcess::errorOccurred, this, &Ping::onErrorOccurred);
+    connect(process, &QProcess::readyReadStandardError, this, &Ping::readStandardError);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this, &Ping::onFinished);
 }
 
-void Ping::start()
+// Public slots
+void Ping::start(const QString &address, const QString &args)
 {
     qInfo() << Q_FUNC_INFO;
     listening = true;
@@ -33,13 +34,14 @@ void Ping::stop()
     process->close();
 }
 
+// Private slots
 void Ping::onStarted()
 {
     qInfo() << Q_FUNC_INFO;
     emit started();
 }
 
-void Ping::stateChanged(QProcess::ProcessState newState)
+void Ping::onStateChanged(QProcess::ProcessState newState)
 {
     qInfo() << Q_FUNC_INFO;
     switch (newState)
@@ -53,14 +55,14 @@ void Ping::stateChanged(QProcess::ProcessState newState)
     }
 }
 
-void Ping::errorOccurred(QProcess::ProcessError error)
+void Ping::onErrorOccurred(QProcess::ProcessError error)
 {
     if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
     emit output("Error occurred");
 }
 
-void Ping::readyReadStandardError()
+void Ping::readStandardError()
 {
     if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
@@ -68,7 +70,7 @@ void Ping::readyReadStandardError()
     emit output(stdErr.trimmed());
 }
 
-void Ping::readyRead()
+void Ping::read()
 {
     if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
@@ -76,7 +78,7 @@ void Ping::readyRead()
     emit output(result.trimmed());
 }
 
-void Ping::readyReadStandardOutput()
+void Ping::readStandardOutput()
 {
     if(listening == false) return;
     qInfo() << Q_FUNC_INFO;
