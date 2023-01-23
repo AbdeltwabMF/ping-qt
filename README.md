@@ -2,6 +2,8 @@
 
 GUI for ping utility using Qt.
 
+## Screenshot
+
 ![ping-qt png](assets/ping-qt.png)
 
 ## Development
