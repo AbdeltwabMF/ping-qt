@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.5)
 project(
   ping-qt
   VERSION 0.1
-  LANGUAGES CXX)
+  LANGUAGES CXX
+)
+set(BINARY_NAME "ping-qt")
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -19,29 +21,29 @@ set(SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set(PROJECT_SOURCES
-    ${SOURCES_DIR}/main.cpp ${SOURCES_DIR}/pingdialog.cpp
-    ${SOURCES_DIR}/ping.cpp ${HEADERS_DIR}/pingdialog.h ${HEADERS_DIR}/ping.h resources.qrc)
+    ${SOURCES_DIR}/main.cpp ${SOURCES_DIR}/dialog.cpp
+    ${SOURCES_DIR}/ping.cpp ${HEADERS_DIR}/dialog.h ${HEADERS_DIR}/ping.h resources.qrc)
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-  qt_add_executable(ping-qt MANUAL_FINALIZATION ${PROJECT_SOURCES})
+  qt_add_executable(${BINARY_NAME} MANUAL_FINALIZATION ${PROJECT_SOURCES})
   # Define target properties for Android with Qt 6 as: set_property(TARGET
   # ping-qt APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
   # ${CMAKE_CURRENT_SOURCE_DIR}/android) For more information, see
   # https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
 else()
   if(ANDROID)
-    add_library(ping-qt SHARED ${PROJECT_SOURCES})
+    add_library(${BINARY_NAME} SHARED ${PROJECT_SOURCES})
     # Define properties for Android with Qt 5 after find_package() calls as:
     # set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
   else()
-    add_executable(ping-qt ${PROJECT_SOURCES})
+    add_executable(${BINARY_NAME} ${PROJECT_SOURCES})
   endif()
 endif()
 
-target_link_libraries(ping-qt PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(${BINARY_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(
-  ping-qt
+  ${BINARY_NAME}
   PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
              MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
              MACOSX_BUNDLE_SHORT_VERSION_STRING
@@ -50,10 +52,10 @@ set_target_properties(
              WIN32_EXECUTABLE TRUE)
 
 install(
-  TARGETS ping-qt
+  TARGETS ${BINARY_NAME}
   BUNDLE DESTINATION .
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 if(QT_VERSION_MAJOR EQUAL 6)
-  qt_finalize_executable(ping-qt)
+  qt_finalize_executable(${BINARY_NAME})
 endif()

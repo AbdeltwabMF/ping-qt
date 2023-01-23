@@ -2,7 +2,7 @@
 #include <QMainWindow>
 #include <QFontDatabase>
 
-#include "../include/pingdialog.h"
+#include "../include/dialog.h"
 
 int main(int argc, char *argv[])
 {

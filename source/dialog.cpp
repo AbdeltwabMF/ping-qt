@@ -1,7 +1,7 @@
 #include <QtWidgets>
 #include <QSizePolicy>
 
-#include "../include/pingdialog.h"
+#include "../include/dialog.h"
 
 PingDialog::PingDialog(QWidget *parent)
     : QDialog(parent)
@@ -112,7 +112,9 @@ PingDialog::PingDialog(QWidget *parent)
     setLayout(mainLayout);
 
     setSizeGripEnabled(true);
-    setWindowTitle(tr("Ping Qt"));
+    setWindowTitle(tr("Ping"));
+    setWindowFlags(
+        Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint | Qt::Dialog);
 }
 
 PingDialog::~PingDialog()

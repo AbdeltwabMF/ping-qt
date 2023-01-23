@@ -1,10 +1,8 @@
 # Ping
 
-User interface for ping utility.
+GUI for ping utility using Qt.
 
-## Screenshot
-
-![ping-qt](assets/ping-qt.png)
+![ping-qt png](assets/ping-qt.png)
 
 ## Development
 
@@ -12,7 +10,7 @@ User interface for ping utility.
 
 - CMake 3.5+
 - Qt 6.0.4+
-- C++ compiler
+- C++17 compiler
 
 ### Build
 
