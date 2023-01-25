@@ -8,13 +8,18 @@ GUI for ping utility using Qt.
 
 ## Development
 
-### Dependencies
+### Tools required
 
 - CMake 3.5+
 - Qt 6.0.4+
-- C++17 compiler
+- C++17 capable compiler:
+  - Visual C++ 15.9 (Visual Studio 2017)
+  - Clang 5
+  - GCC 7
 
-### Build
+### Set up
+
+Build with CMake
 
 ```bash
 cmake . -B build
